@@ -5,6 +5,8 @@ for file in ~/.{extra,bash_prompt,exports,aliases,functions}; do
 done
 unset file
 
+source ~/home/.bash_profile.user
+
 # init z   https://github.com/rupa/z
 . ~/code/z/z.sh
 

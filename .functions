@@ -156,3 +156,93 @@ gifify() {
   fi
 }
 
+
+
+
+function setproxy {
+    if [ $# -lt 1 ] ; then
+	http_proxy='so-webcache.germany.sun.com:3128'
+    else
+	http_proxy=$1
+    fi
+    export http_proxy
+    https_proxy=${http_proxy} ; export https_proxy
+    ftp_proxy=${http_proxy} ; export ftp_proxy
+    echo -e "\n  http_proxy=${http_proxy}\n  https_proxy=${https_proxy}\n  ftp_proxy=${ftp_proxy}\n"
+}
+function unsetproxy {
+    unset http_proxy
+    unset https_proxy
+    unset ftp_proxy
+}
+
+function sgrep {
+    if [ $# -lt 1 ]; then
+	echo -e "\n  usage: sgrep <pattern> [file-extension]\n"
+    else
+	if [ $# -gt 1 ]; then
+	    ( find . \( -name \*."$2" \) -exec egrep -n "$1" {} \; -print ) 2> /dev/null
+	else
+	    ( egrep -rn "$1" . ) 2> /dev/null
+	fi
+    fi
+}
+
+function mktemp_ {
+    case "$(uname -sm)" in
+        Darwin*)
+            mktemp -t mktemp
+            ;;
+        *)
+            mktemp -t
+            ;;
+    esac
+}
+
+function rmd {
+    if [ -z $@ ] ; then
+	echo "rmd <target>"
+    else
+	target="`dirname $1`/`basename $1`-rmd-$RANDOM"
+	mv $1 ${target}
+	echo "Removing ${target}..."
+	rm -rf ${target} &
+    fi
+}
+
+function git-remove-remote-tag {
+    git tag -d $1 && git push origin :refs/tags/$1
+}
+
+function wget-patch {
+    tmpFile=$(mktemp_)
+    wget --no-check-certificate -O ${tmpFile} $1
+    shift
+    opt=$@
+    if [ -z ${opt} ] ; then
+	opt=-p0
+    fi
+    patch ${opt} < ${tmpFile}
+}
+
+function dos2unix {
+    if [ $# -lt 1 ]; then
+		echo -e "\n  usage: dos2unix <file>\n"
+    else
+        tmpFile=$(mktemp_)
+		tr -d '\15\32' < "$1" > ${tmpFile}
+		mv ${tmpFile} "$1"
+    fi
+}
+
+function git-set-user {
+	git config user.email dbo@boelzle.org
+}
+
+function git-reapply-patch {
+    git log -n 1 -p $1 | patch -p1 -i-
+}
+
+function gsm_ {
+    git submodule foreach "git $@ &"
+}

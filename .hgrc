@@ -1,0 +1,29 @@
+[extensions]
+hgext.mq =
+hgext.purge =
+hgext.extdiff =
+hgext.rebase =
+#hgext.forest =
+#zeroconf =
+hgext.bookmarks =
+#hggit =
+progress =
+eol =
+
+[extdiff]
+cmd.opendiff = opendiff-w
+
+[diff]
+git = 1
+showfunc = True
+
+[ui]
+# merge = ${HOME_}/bin/hgmerge.py
+ssh = ssh -C
+
+[web]
+#cacerts = /opt/local/etc/hg-dummy-cert.pem
+
+[patch]
+eol = auto
+
